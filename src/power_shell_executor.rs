@@ -1,14 +1,9 @@
-use std::any::Any;
-use std::fmt::Debug;
 use std::process::Command;
-use powershell_script::{PsScript, PsScriptBuilder};
 
-pub fn get_executor() -> Command {
-    Command::new("powershell")
-}
+pub fn execute(string: &str) -> String {
+    let mut executor = get_executor();
 
-pub fn execute(command: &mut Command, string: &str) -> String {
-    let output = command.arg(&string)
+    let output = executor.arg(string)
         .output()
         .expect("Failed to execute");
 
@@ -16,9 +11,12 @@ pub fn execute(command: &mut Command, string: &str) -> String {
         Ok(result) => {
             result
         }
-        Err(_) => {
-            println!("None");
-            String::new()
+        Err(e) => {
+            e.to_string()
         }
     }
+}
+
+fn get_executor() -> Command {
+    Command::new("powershell")
 }
